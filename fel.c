@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include "fel.h"
 #include "portable_endian.h"
 #include "progress.h"
 
@@ -420,53 +421,6 @@ void aw_fel_fill(libusb_device_handle *usb, uint32_t offset, size_t size, unsign
 	memset(buf, value, size);
 	aw_write_buffer(usb, buf, offset, size, false);
 }
-
-/*
- * The 'sram_swap_buffers' structure is used to describe information about
- * two buffers in SRAM, the content of which needs to be exchanged before
- * calling the U-Boot SPL code and then exchanged again before returning
- * control back to the FEL code from the BROM.
- */
-
-typedef struct {
-	uint32_t buf1; /* BROM buffer */
-	uint32_t buf2; /* backup storage location */
-	uint32_t size; /* buffer size */
-} sram_swap_buffers;
-
-/*
- * Each SoC variant may have its own list of memory buffers to be exchanged
- * and the information about the placement of the thunk code, which handles
- * the transition of execution from the BROM FEL code to the U-Boot SPL and
- * back.
- *
- * Note: the entries in the 'swap_buffers' tables need to be sorted by 'buf1'
- * addresses. And the 'buf1' addresses are the BROM data buffers, while 'buf2'
- * addresses are the intended backup locations.
- *
- * Also for performance reasons, we optionally want to have MMU enabled with
- * optimal section attributes configured (the code from the BROM should use
- * I-cache, writing data to the DRAM area should use write combining). The
- * reason is that the BROM FEL protocol implementation moves data using the
- * CPU somewhere on the performance critical path when transferring data over
- * USB. The older SoC variants (A10/A13/A20/A31/A23) already have MMU enabled
- * and we only need to adjust section attributes. The BROM in newer SoC variants
- * (A33/A83T/H3) doesn't enable MMU anymore, so we need to find some 16K of
- * spare space in SRAM to place the translation table there and specify it as
- * the 'mmu_tt_addr' field in the 'soc_sram_info' structure. The 'mmu_tt_addr'
- * address must be 16K aligned.
- */
-typedef struct {
-	uint32_t           soc_id;       /* ID of the SoC */
-	uint32_t           spl_addr;     /* SPL load address */
-	uint32_t           scratch_addr; /* A safe place to upload & run code */
-	uint32_t           thunk_addr;   /* Address of the thunk code */
-	uint32_t           thunk_size;   /* Maximal size of the thunk code */
-	bool               needs_l2en;   /* Set the L2EN bit */
-	uint32_t           mmu_tt_addr;  /* MMU translation table address */
-	uint32_t           sid_addr;     /* base address for SID_KEY[0-3] registers */
-	sram_swap_buffers *swap_buffers;
-} soc_sram_info;
 
 /*
  * The FEL code from BROM in A10/A13/A20 sets up two stacks for itself. One
