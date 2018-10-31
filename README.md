@@ -1,6 +1,8 @@
 # sunxi-tools
 [![License](http://img.shields.io/badge/License-GPL-green.svg)](LICENSE.md)
 [![Build Status](https://travis-ci.org/linux-sunxi/sunxi-tools.svg?branch=master)](https://travis-ci.org/linux-sunxi/sunxi-tools)
+[![Build status](https://ci.appveyor.com/api/projects/status/96u5jmnx76jk6qwe/branch/windows?svg=true)](https://ci.appveyor.com/project/linuxsunxi/sunxi-tools/branch/windows)
+[![Build Status](https://tea-ci.org/api/badges/linux-sunxi/sunxi-tools/status.svg?branch=windows)](https://tea-ci.org/linux-sunxi/sunxi-tools)
 [![Releases](https://img.shields.io/github/release/linux-sunxi/sunxi-tools.svg)](https://github.com/linux-sunxi/sunxi-tools/releases)
 [![Commits](https://img.shields.io/github/commits-since/linux-sunxi/sunxi-tools/v1.4.svg)](https://github.com/linux-sunxi/sunxi-tools/compare/v1.4...master)
 
@@ -142,6 +144,16 @@ Currently this means `phoenix_info` and `sunxi-nand-image-builder`.
 
 * `make install-misc`
 builds *misc* and installs the resulting binaries.
+
+## Using sunxi-tools under Windows
+Please note that our main development (and testing) is focused on unix-oriented
+operating systems. The Windows port of `sunxi-tools` is **highly experimental** -
+use at your own risk!
+
+Nevertheless, we're now providing some
+[prebuilt Win32 binaries](https://ci.appveyor.com/project/linuxsunxi/sunxi-tools/build/artifacts).
+For the required USB driver installation and (preliminary) usage information, refer to
+[these instructions](http://linux-sunxi.org/FEL/USBBoot#Using_sunxi-fel_on_Windows).
 
 ## License
 This software is licensed under the terms of GPLv2+ as defined by the
